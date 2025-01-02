@@ -20,7 +20,7 @@ jobs:
 
       - name: Check Podcast Status
         run: |
-          PODCAST_URL="https://podcasts.apple.com/us/podcast/backlink1dpod/id1786769245"
+          PODCAST_URL="https://podcasts.apple.com/us/podcast/backlink1dpod/id1786769242"
           TELEGRAM_TOKEN="7904092565:AAFsSnZaZT8fZcYO587LxRm4tFROvNE2bsQ"
           CHAT_ID="7066164129"
 
