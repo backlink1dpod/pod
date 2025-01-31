@@ -1,8 +1,9 @@
-name: Check & Auto-Publish Podcast
+name: Check Podcast Status
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # Kiểm tra mỗi 15 phút
+    # Lịch chạy mỗi 15 phút
+    - cron: '*/15 * * * *'
   workflow_dispatch:  # Cho phép chạy thủ công từ GitHub UI
 
 jobs:
@@ -13,32 +14,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # Chọn phiên bản Python bạn muốn (ví dụ: 3.x)
+
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y curl jq chromium-chromedriver
-          pip install playwright
-          playwright install chromium
+          python -m pip install --upgrade pip
+          pip install requests selenium  # Cài đặt requests và selenium cho việc publish podcast
 
       - name: Check Podcast Status
         run: |
           PODCAST_URL="https://podcasts.apple.com/us/podcast/backlink1dpod/id1786769245"
-          TELEGRAM_TOKEN="${{ secrets.TELEGRAM_TOKEN }}"
-          CHAT_ID="${{ secrets.CHAT_ID }}"
+          TELEGRAM_TOKEN="7904092565:AAFsSnZaZT8fZcYO587LxRm4tFROvNE2bsQ"
+          CHAT_ID="7066164129"
+          
+          # Kiểm tra trạng thái podcast
+          RESPONSE=$(curl --write-out "%{http_code}" --silent --output /dev/null $PODCAST_URL)
 
-          echo "🔍 Checking Podcast Status..."
-          HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" $PODCAST_URL)
-
-          if [ "$HTTP_STATUS" -eq 200 ]; then
-            echo "✅ Podcast đang hoạt động bình thường!"
+          if [ "$RESPONSE" -eq 200 ]; then
+            echo "Podcast hoạt động bình thường."
           else
-            echo "❌ Podcast không hoạt động, cần publish lại!"
+            echo "Podcast cần được publish lại."
+            # Gửi thông báo đến Telegram nếu podcast không hoạt động
             curl -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
               -d chat_id=$CHAT_ID \
-              -d text="⚠ Podcast bị lỗi: cần publish lại!"
-
-            # Kích hoạt workflow publish_podcast.yml
-            curl -X POST -H "Accept: application/vnd.github.v3+json" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              https://api.github.com/repos/${{ github.repository }}/actions/workflows/publish_podcast.yml/dispatches \
-              -d '{"ref":"main"}'
+              -d text="Podcast bị lỗi: Cần được publish lại."
+            # Gọi script Python để publish lại podcast
+            python publish_podcast.py  # Chạy script Python để publish lại podcast
+          fi
