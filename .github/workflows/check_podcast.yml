@@ -14,24 +14,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'  # Chọn phiên bản Python bạn muốn (ví dụ: 3.x)
-
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install requests selenium  # Cài đặt requests và selenium cho việc publish podcast
+          # Cài đặt curl và jq (nếu chưa có)
+          sudo apt-get update
+          sudo apt-get install -y curl jq python3 python3-pip
+
+          # Cài đặt thư viện Python yêu cầu (nếu có)
+          pip3 install requests selenium
 
       - name: Check Podcast Status
         run: |
           PODCAST_URL="https://podcasts.apple.com/us/podcast/backlink1dpod/id1786769245"
           TELEGRAM_TOKEN="7904092565:AAFsSnZaZT8fZcYO587LxRm4tFROvNE2bsQ"
           CHAT_ID="7066164129"
-          
+
           # Kiểm tra trạng thái podcast
           RESPONSE=$(curl --write-out "%{http_code}" --silent --output /dev/null $PODCAST_URL)
+
+          echo "Mã trạng thái của podcast: $RESPONSE"
 
           if [ "$RESPONSE" -eq 200 ]; then
             echo "Podcast hoạt động bình thường."
@@ -41,6 +42,8 @@ jobs:
             curl -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
               -d chat_id=$CHAT_ID \
               -d text="Podcast bị lỗi: Cần được publish lại."
-            # Gọi script Python để publish lại podcast
-            python publish_podcast.py  # Chạy script Python để publish lại podcast
+
+            # Kích hoạt script publish_podcast.py để publish lại podcast
+            echo "Chạy script publish_podcast.py để publish lại podcast"
+            python3 publish_podcast.py  # Kích hoạt script Python để publish lại podcast
           fi
