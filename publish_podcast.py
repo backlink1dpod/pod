@@ -8,7 +8,7 @@ APPLE_PASSWORD = "otvi-odwz-mevo-eonv"  # Thay thế bằng Apple Password của
 
 def auto_publish():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)  # Chạy trình duyệt ẩn
+        browser = p.chromium.launch(headless=False)  # Chạy trình duyệt ẩn
         page = browser.new_page()
         
         # 1️⃣ Truy cập Apple Podcasts Connect
