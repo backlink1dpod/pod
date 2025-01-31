@@ -17,6 +17,10 @@ def auto_publish():
 
         # 2️⃣ Đăng nhập bằng tài khoản Apple
         page.fill('//input[@id="account_name_text_field"]', APPLE_ID)  # Điền Apple ID
+        page.press('//input[@id="account_name_text_field"]', "Enter")  # Nhấn Enter để chuyển đến ô mật khẩu
+        time.sleep(2)  # Chờ 2FA nếu có
+        
+        # Điền mật khẩu
         page.fill('//input[@id="password_text_field"]', APPLE_PASSWORD)  # Điền mật khẩu
         page.click('//button[@id="sign-in"]')  # Nhấn nút Đăng nhập
         time.sleep(5)  # Chờ 2FA nếu có
