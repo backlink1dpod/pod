@@ -20,8 +20,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y curl jq python3 python3-pip
 
-          # Cài đặt thư viện Python yêu cầu (nếu có)
-          pip3 install requests selenium
+          # Cài đặt playwright và cấu hình
+          pip3 install playwright
+          python3 -m playwright install  # Cài đặt các browser cần thiết cho playwright
 
       - name: Check Podcast Status
         run: |
