@@ -3,8 +3,8 @@ import time
 import os
 
 # Lấy thông tin từ GitHub Secrets
-APPLE_ID = os.getenv("APPLE_ID")
-APPLE_PASSWORD = os.getenv("APPLE_PASSWORD")
+APPLE_ID = "p.thao24122003@icloud.com"  # Thay thế bằng Apple ID của bạn
+APPLE_PASSWORD = "otvi-odwz-mevo-eonv"  # Thay thế bằng Apple Password của bạn
 
 def auto_publish():
     with sync_playwright() as p:
@@ -16,9 +16,9 @@ def auto_publish():
         time.sleep(3)
 
         # 2️⃣ Đăng nhập bằng tài khoản Apple
-        page.fill('input[name="appleId"]', APPLE_ID)
-        page.fill('input[name="password"]', APPLE_PASSWORD)
-        page.click('button[type="submit"]')
+        page.fill('//input[@id="account_name_text_field"]', APPLE_ID)  # Điền Apple ID
+        page.fill('//input[@id="password_text_field"]', APPLE_PASSWORD)  # Điền mật khẩu
+        page.click('//button[@id="sign-in"]')  # Nhấn nút Đăng nhập
         time.sleep(5)  # Chờ 2FA nếu có
         
         # Nếu có mã 2FA, bạn cần nhập thủ công trên GitHub Actions hoặc sử dụng giải pháp OTP tự động
