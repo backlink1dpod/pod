@@ -3,7 +3,7 @@ name: Check Podcast Status
 on:
   schedule:
     # Lịch chạy mỗi giờ
-    - cron: '0 * * * *'
+    - cron: '0 2,14 * * *'
   workflow_dispatch:  # Cho phép chạy thủ công từ GitHub UI
 
 jobs:
